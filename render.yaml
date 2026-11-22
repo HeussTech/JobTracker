@@ -1,0 +1,39 @@
+# Render Blueprint: Postgres + API (Docker) + static React site
+databases:
+  - name: jobtracker-db
+    plan: free
+    databaseName: jobtracker
+    user: jobtracker
+
+services:
+  - type: web
+    name: jobtracker-api
+    runtime: docker
+    plan: free
+    dockerfilePath: ./server/Dockerfile
+    dockerContext: ./server
+    healthCheckPath: /api/health
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: jobtracker-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: NODE_ENV
+        value: production
+      - key: CORS_ORIGIN
+        sync: false # URL of the static site, e.g. https://jobtracker-web.onrender.com
+
+  - type: web
+    name: jobtracker-web
+    runtime: static
+    buildCommand: cd client && npm ci && npm run build
+    staticPublishPath: client/dist
+    envVars:
+      - key: VITE_API_URL
+        sync: false # URL of the API, e.g. https://jobtracker-api.onrender.com
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html

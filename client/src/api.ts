@@ -19,6 +19,9 @@ export interface NewApplication {
   notes?: string;
 }
 
+// Empty in Docker/dev (same origin via Nginx or Vite proxy); set VITE_API_URL when the API lives on another domain.
+const API_URL = (import.meta.env.VITE_API_URL ?? "").replace(/\/$/, "");
+
 const TOKEN_KEY = "jobtracker_token";
 
 export const getToken = () => localStorage.getItem(TOKEN_KEY);
@@ -27,7 +30,7 @@ export const setToken = (token: string | null) =>
 
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const token = getToken();
-  const res = await fetch(`/api${path}`, {
+  const res = await fetch(`${API_URL}/api${path}`, {
     ...options,
     headers: {
       "Content-Type": "application/json",

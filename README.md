@@ -5,6 +5,10 @@ A full-stack job application tracker. Add applications, follow them on a kanban 
 
 **Stack:** React 18 + TypeScript (Vite, TanStack Query) · Node.js + Express · PostgreSQL + Prisma · Zod · Docker Compose · GitHub Actions
 
+**Live demo:** https://jobtracker-web.onrender.com _(free tier: the API sleeps after 15 min, the first request can take about a minute)_
+
+![JobTracker kanban board](docs/screenshot.png)
+
 ## Run it (Docker, 3 commands)
 
 ```bash
@@ -65,6 +69,16 @@ cd server && npm test
 
 GitHub Actions builds and tests the server, builds the client, and builds both Docker images on every push.
 
+## Deploy on Render (free tier)
+
+The repo includes a `render.yaml` Blueprint (PostgreSQL + API in Docker + static React site).
+
+1. Push the repo to GitHub.
+2. On Render: **New > Blueprint**, select the repo, and fill the two prompted variables:
+   - `CORS_ORIGIN` = URL of the static site (e.g. `https://jobtracker-web.onrender.com`)
+   - `VITE_API_URL` = URL of the API (e.g. `https://jobtracker-api.onrender.com`)
+3. If Render adds a suffix to a service name, update these two variables with the real URLs and redeploy.
+
 ## Design decisions
 
 - **Prisma `db push` in the container** keeps the demo to one command. For production, commit migrations
@@ -77,4 +91,3 @@ GitHub Actions builds and tests the server, builds the client, and builds both D
 - Drag and drop between columns, notes and interview dates per application
 - Refresh tokens + httpOnly cookies
 - Integration tests with a real PostgreSQL service in CI
-- Deploy to Render / Fly.io and add the live demo link here
